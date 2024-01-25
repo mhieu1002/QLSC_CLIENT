@@ -36,20 +36,21 @@ function getItem(
 const adminItem = [
   getItem("Phiếu ghi nhận sự cố", "/", <FormOutlined />),
   getItem("Đăng ký sửa máy in", "/sign-up-for-printer-repair", <PrinterOutlined />),
-  // getItem("Lịch", "calendar", <CalendarOutlined />, [
-  //   getItem("Lịch trực", "/calendar"),
-  //   getItem("Lịch trực lãnh đạo", "/leadership-calendar"),
-  //   getItem("Lịch họp", "/meeting-schedule"),
-  // ]),
-  // getItem("Đấu thầu", "/sign-up-for-printer-repair", <PushpinOutlined />),
-  getItem("Quản lý khoa", "department", <TeamOutlined />, [
-    getItem("Danh sách khoa", "/department"),
-    getItem("Danh sách nhân viên", "/employee"),
+  getItem("Lịch", "calendar", <CalendarOutlined />, [
+    getItem("Lịch trực", "/calendar"),
+    getItem("Lịch trực lãnh đạo", "/leadership-calendar"),
+    getItem("Lịch họp", "/meeting-schedule"),
   ]),
   getItem("Báo cáo sự cố", "sub1", <FileSearchOutlined />, [
     getItem("Báo cáo theo khoa", "/problem-report-department"),
     getItem("Báo cáo theo lãnh vực", "/problem-report-industry"),
   ]),
+  getItem("Quản lý khoa", "department", <TeamOutlined />, [
+    getItem("Danh sách khoa", "/department"),
+    getItem("Danh sách nhân viên", "/employee"),
+  ]),
+
+  getItem("Đấu thầu", "/sign-up-for-printer-repair", <PushpinOutlined />),
   getItem("Thống kê", "/statistical", <BarChartOutlined />),
 ];
 
@@ -87,8 +88,8 @@ const Sidebar: React.FC = () => {
       >
         <img
           style={{
-            height: "110px",
-            paddingLeft: "55px",
+            height: "120px",
+            // paddingLeft: "55px",
           }}
           alt=""
           src="https://res.cloudinary.com/dtvgddjmz/image/upload/v1701245260/Ti%C3%AAu_%C4%91%E1%BB%81_Website_BV_16_-removebg-preview_yjlulq_uk19pi.png"
