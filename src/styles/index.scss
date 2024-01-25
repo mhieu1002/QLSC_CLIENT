@@ -40,3 +40,17 @@ html *::-webkit-scrollbar-track {
   background: #dde1ef;
   border-radius: 2px;
 }
+
+.hover:hover {
+  opacity: .8;
+}
+
+.disabled-section {
+  pointer-events: none;
+}
+
+.disabled-section > .hover {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.5;
+}

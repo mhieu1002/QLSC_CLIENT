@@ -24,7 +24,7 @@ const FormLogin: React.FC = () => {
       onSuccess: (res) => {
         const { token } = res.data;
         Cookies.set("accessToken", token);
-        navigate("/");
+        navigate("/loading");
       },
       onError: (error: any) => {
         const { data } = error;

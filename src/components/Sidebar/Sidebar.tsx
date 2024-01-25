@@ -3,6 +3,10 @@ import {
   FileSearchOutlined,
   FormOutlined,
   TeamOutlined,
+  PrinterOutlined,
+  CalendarOutlined,
+  PushpinOutlined
+  
 } from "@ant-design/icons";
 import { Menu, MenuProps } from "antd";
 import MenuItem from "antd/es/menu/MenuItem";
@@ -30,7 +34,14 @@ function getItem(
 }
 
 const adminItem = [
-  getItem("Phiếu ghi nhận", "/", <FormOutlined />),
+  getItem("Phiếu ghi nhận sự cố", "/", <FormOutlined />),
+  getItem("Đăng ký sửa máy in", "/sign-up-for-printer-repair", <PrinterOutlined />),
+  // getItem("Lịch", "calendar", <CalendarOutlined />, [
+  //   getItem("Lịch trực", "/calendar"),
+  //   getItem("Lịch trực lãnh đạo", "/leadership-calendar"),
+  //   getItem("Lịch họp", "/meeting-schedule"),
+  // ]),
+  // getItem("Đấu thầu", "/sign-up-for-printer-repair", <PushpinOutlined />),
   getItem("Quản lý khoa", "department", <TeamOutlined />, [
     getItem("Danh sách khoa", "/department"),
     getItem("Danh sách nhân viên", "/employee"),
@@ -42,7 +53,7 @@ const adminItem = [
   getItem("Thống kê", "/statistical", <BarChartOutlined />),
 ];
 
-const employeeItems = [getItem("Phiếu ghi nhận", "/", <FormOutlined />)];
+const employeeItems = [getItem("Phiếu ghi nhận sự cố", "/", <FormOutlined />), getItem("Đăng ký sửa máy in", "/sign-up-for-printer-repair", <PrinterOutlined />),];
 
 const Sidebar: React.FC = () => {
   const user = useAuth();
@@ -77,7 +88,7 @@ const Sidebar: React.FC = () => {
         <img
           style={{
             height: "110px",
-            paddingLeft: "60px",
+            paddingLeft: "55px",
           }}
           alt=""
           src="https://res.cloudinary.com/dtvgddjmz/image/upload/v1701245260/Ti%C3%AAu_%C4%91%E1%BB%81_Website_BV_16_-removebg-preview_yjlulq_uk19pi.png"

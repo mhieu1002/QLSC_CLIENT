@@ -110,7 +110,6 @@ const FormProblem = () => {
     console.log("Failed:", errorInfo);
   };
 
-
   const checkRoleAdmin = useMemo(() => {
     if (user?.data?.role === ROLE.SUPER_ADMIN) {
       return true;
@@ -130,7 +129,9 @@ const FormProblem = () => {
 
   return (
     <section>
-      <h1>Form {id ? "sửa" : "thêm"} phiếu ghi nhận sự cố</h1>
+      <h1 style={{ padding: "15px 0", letterSpacing: "2px" }}>
+        Form {id ? "sửa" : "thêm"} phiếu ghi nhận sự cố
+      </h1>
 
       <Form
         form={form}
@@ -172,17 +173,10 @@ const FormProblem = () => {
             </Form.Item>
           </Col>
           <Col xl={12}>
-            <Form.Item
-              label="Liên hệ"
-              name="contact"
-              rules={[
-                { required: true, message: "Vui lòng nhập cách liên hệ" },
-              ]}
-            >
-              <Input />
+            <Form.Item label="Nội dung phản ánh" name="note">
+              <TextArea rows={4} />
             </Form.Item>
           </Col>
-
           {id && (
             <Col xl={12}>
               <Form.Item
@@ -267,10 +261,12 @@ const FormProblem = () => {
               </Form.Item>
             </Col>
           )}
-
           <Col xl={12}>
-            <Form.Item label="Nội dung phản ánh" name="note">
-              <TextArea rows={4} />
+            <Form.Item
+              label="Ghi chú"
+              name="contact"
+            >
+              <TextArea rows={4} disabled={!checkRoleAdmin} />
             </Form.Item>
           </Col>
         </Row>
@@ -281,12 +277,12 @@ const FormProblem = () => {
               type="primary"
               htmlType="submit"
               disabled={
-                // t push code cho m rồi á, 
-                (!checkRoleAdmin && problem?.data?.status === "processing" ) ||
+                // t push code cho m rồi á,
+                (!checkRoleAdmin && problem?.data?.status === "processing") ||
                 (!checkRoleAdmin && problem?.data?.status === "processed")
               }
             >
-              Sửa
+              Cập nhật
             </Button>
           ) : (
             <Button type="primary" htmlType="submit">

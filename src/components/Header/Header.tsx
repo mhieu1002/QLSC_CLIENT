@@ -22,9 +22,10 @@ const Header = () => {
           <h2
             style={{
               paddingTop: "8px",
+              letterSpacing: "3px"
             }}
           >
-            Quản lý sự cố
+            BỆNH VIỆN NHI ĐỒNG 2
           </h2>
         </div>
         <Space>

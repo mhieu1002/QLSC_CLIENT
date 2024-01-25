@@ -1,31 +1,39 @@
 const problemIndustries = [
   {
     label: "Tài chính",
-    value: "finance",
+    value: "Tài chính",
   },
   {
     label: "Hành chính",
-    value: "hanhchinh",
+    value: "Hành chính",
   },
   {
     label: "Dược",
-    value: "duoc",
+    value: "Dược",
   },
   {
     label: "Vật tư",
-    value: "vattu",
+    value: "Vật tư",
   },
   {
     label: "Cận lâm sàng",
-    value: "clinical",
+    value: "Cận lâm sàng",
   },
   {
     label: "Phần cứng",
-    value: "hardware",
+    value: "Phần cứng",
   },
   {
     label: "Phần mềm",
-    value: "software",
+    value: "Phần mềm",
+  },
+  {
+    label: "Máy tính",
+    value: "Máy tính",
+  },
+  {
+    label: "Máy in",
+    value: "Máy in",
   },
 
 ];
@@ -33,15 +41,15 @@ const problemIndustries = [
 const problemRole = [
   {
     label: "Nhân viên",
-    value: "staff",
+    value: "Nhân viên",
   },
   {
     label: "Bác sĩ",
-    value: "doctor",
+    value: "Bác sĩ",
   },
   {
     label: "Điều dưỡng",
-    value: "nurse",
+    value: "Điều dưỡng",
   },
 ];
 

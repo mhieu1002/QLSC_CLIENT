@@ -82,7 +82,7 @@ const FormDepartment: React.FC = () => {
 
   return (
     <section>
-      <h1>Form {id ? "sửa" : "thêm"} khoa</h1>
+      <h1 style={{padding: "15px 0", letterSpacing: "2px"}}>Form {id ? "sửa" : "thêm"} khoa</h1>
       <Form
         form={form}
         name="department"

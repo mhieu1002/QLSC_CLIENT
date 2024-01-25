@@ -4,10 +4,15 @@ import { useQueryClient } from "@tanstack/react-query";
 import ModalCommon from "../../components/Modal/Modal";
 import { ProblemResponse } from "../../types/problem";
 import moment from "moment";
+import 'moment/locale/vi';
 import { find } from "lodash";
 import { problemIndustries } from "../../assets/data";
 import StatusTag from "../../components/StatusTag";
 import { Button } from "antd";
+
+moment.locale('vi');
+
+// Sử dụng định dạng mong muốn
 
 interface ModalReportDataProblemProps {
   isModalOpen: boolean;
@@ -83,18 +88,17 @@ const ModalReportDataProblem = (props: ModalReportDataProblemProps) => {
             </div>
             <div
               style={{
-                fontSize: "13px",
                 fontWeight: "700",
               }}
             >
-              <span style={{fontSize: "14px"}}>Người đề xuất: </span>
-              <span style={{fontSize: "14px"}}>{problem.adminUserName}</span>
+              <span style={{fontSize: "15px"}}>Người đề xuất: </span>
+              <span style={{fontSize: "15px"}}>{problem.adminUserName}</span>
             </div>
             <div
               style={{
-                fontSize: "14px",
+                fontSize: "15px",
                 fontWeight: "700",
-                paddingTop: "10px",
+                paddingTop: "5px",
               }}
             >
               <span>Khoa - Phòng đề xuất xử lý sự cố: </span>
@@ -102,15 +106,15 @@ const ModalReportDataProblem = (props: ModalReportDataProblemProps) => {
             </div>
             <div
               style={{
-                fontSize: "14px",
-                marginTop: "10px",
+                fontSize: "15px",
+                marginTop: "5px",
               }}
             >
-              <div>
+              <div style={{fontSize: "15px"}}>
                 <span style={{ fontWeight: "700" }}>Vấn đề sự cố: </span>
-                <span style={{fontSize: "14px"}}>{problem.title}</span>
+                <span >{problem.title}</span>
               </div>
-              <div style={{ fontSize: "14px", paddingTop: "10px" }}>
+              <div style={{ fontSize: "15px" }}>
                 <span style={{ fontWeight: "700" }}>Lãnh vực: </span>
                 <span>
                   {
@@ -122,18 +126,18 @@ const ModalReportDataProblem = (props: ModalReportDataProblemProps) => {
                   }
                 </span>
               </div>
-              <div style={{ fontSize: "14px", paddingTop: "10px" }}>
+              <div style={{ fontSize: "14px", paddingTop: "5px" }}>
                 <span style={{ fontWeight: "700" }}>Ngày đề xuất: </span>
                 <span>{moment(problem.createdAt).format("DD/MM/YYYY")}</span>
               </div>
-              <div style={{ fontSize: "14px", paddingTop: "10px", paddingRight: "20px"}}>
+              <div style={{ fontSize: "14px", paddingTop: "5px", paddingRight: "20px"}}>
                 <span style={{ fontWeight: "700" }}>Nội dung sự cố: </span>
                 <span>{problem.note}</span>
               </div>
               <div
                 style={{
                   fontSize: "14px",
-                  paddingTop: "10px",
+                  paddingTop: "5px",
                 }}
               >
                 <span style={{ fontWeight: "700" }}>Trạng thái: </span>
@@ -142,7 +146,7 @@ const ModalReportDataProblem = (props: ModalReportDataProblemProps) => {
             </div>
             <div
               style={{
-                marginTop: "15px",
+                marginTop: "5px",
                 fontSize: "13px",
                 fontWeight: "900",
                 fontStyle: "italic",
@@ -157,14 +161,13 @@ const ModalReportDataProblem = (props: ModalReportDataProblemProps) => {
               style={{
                 fontSize: "14px",
                 paddingTop: "15px",
-                paddingRight: "35px",
+                paddingRight: "25px",
                 display: "flex",
                 justifyContent: "end",
                 fontStyle: "italic",
               }}
             >
-              <span style={{ marginRight: "5px" }}>Ngày xử lý:</span>
-              <span>{moment(problem.processingDate).format("DD/MM/YYYY")}</span>
+              <span>{moment(problem.processingDate).format("[Ngày] DD [tháng] MM [năm] YYYY")}</span>
             </div>
             <div
               style={{

@@ -72,11 +72,6 @@ const ProblemReportIndustry = () => {
       ),
     },
     {
-      title: "Liên hệ",
-      dataIndex: "contact",
-      key: "contact",
-    },
-    {
       title: "Ngày đề xuất",
       dataIndex: "createdAt",
       key: "createdAt",

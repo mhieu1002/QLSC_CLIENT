@@ -3,6 +3,8 @@ import React, { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import { TRoute } from "../types/route";
 import DashboardLayout from "../layouts/DashboardLayout";
+import PrinterRepair from "../pages/PrinterRepair/PrinterRepair";
+import loading from "../pages/load/loading";
 
 const Login = lazy(() => import("../pages/Login"));
 const Employee = lazy(() => import("../pages/Employee/Employee"));
@@ -26,8 +28,18 @@ const routes: TRoute[] = [
     layout: null,
   },
   {
+    path: "/loading",
+    element: loading,
+    layout: null,
+  },
+  {
     path: "/statistical",
     element: ProblemStatistical,
+    layout: DashboardLayout,
+  },
+  {
+    path: "/sign-up-for-printer-repair",
+    element: PrinterRepair,
     layout: DashboardLayout,
   },
   {
