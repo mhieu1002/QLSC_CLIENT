@@ -13,6 +13,7 @@ const Department = lazy(() => import("../pages/Department/Department"));
 const FormDepartment = lazy(() => import("../pages/Department/FormDepartment"));
 const Problem = lazy(() => import("../pages/Problem/Problem"));
 const FormProblem = lazy(() => import("../pages/Problem/FormProblem"));
+const FormPrinterRepair = lazy(() => import("../pages/PrinterRepair/FormPrinterRepair"));
 const ProblemReportByDepartment = lazy(
   () => import("../pages/Problem/ProblemReportByDepartment")
 );
@@ -41,6 +42,18 @@ const routes: TRoute[] = [
     path: "/sign-up-for-printer-repair",
     element: PrinterRepair,
     layout: DashboardLayout,
+    subRoutes: [
+      {
+        path: "/add",
+        element: FormPrinterRepair,
+        layout: DashboardLayout,
+      },
+      {
+        path: "/:id",
+        element: FormPrinterRepair,
+        layout: DashboardLayout,
+      },
+    ],
   },
   {
     path: "/problem-report-department",

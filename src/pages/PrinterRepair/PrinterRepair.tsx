@@ -1,6 +1,11 @@
+import ListPrinterRepair from "../../features/PrinterRepair/List/ListPrinterRepair";
 
 const PrinterRepair = () => {
-  return <>Test</>;
+  return (
+    <main>
+      <ListPrinterRepair/>
+    </main>
+  );
 };
 
 export default PrinterRepair;

@@ -38,6 +38,18 @@ const problemIndustries = [
 
 ];
 
+const prinf = [
+  {
+    label: "Canon 2900",
+    value: "Canon 2900",
+  },
+  {
+    label: "HP LaserJet Pro M404dw",
+    value: "HP LaserJet Pro M404dw",
+  }
+
+];
+
 const problemRole = [
   {
     label: "Nhân viên",
@@ -100,4 +112,4 @@ const problemReciever = [
   },
 ];
 
-export { problemIndustries, problemRole, problemReciever };
+export { problemIndustries, problemRole, problemReciever, prinf };

@@ -37,8 +37,6 @@ const adminItem = [
   getItem("Phiếu ghi nhận sự cố", "/", <FormOutlined />),
   getItem("Đăng ký sửa máy in", "/sign-up-for-printer-repair", <PrinterOutlined />),
   getItem("Lịch", "calendar", <CalendarOutlined />, [
-    getItem("Lịch trực", "/calendar"),
-    getItem("Lịch trực lãnh đạo", "/leadership-calendar"),
     getItem("Lịch họp", "/meeting-schedule"),
   ]),
   getItem("Báo cáo sự cố", "sub1", <FileSearchOutlined />, [
@@ -50,7 +48,6 @@ const adminItem = [
     getItem("Danh sách nhân viên", "/employee"),
   ]),
 
-  getItem("Đấu thầu", "/sign-up-for-printer-repair", <PushpinOutlined />),
   getItem("Thống kê", "/statistical", <BarChartOutlined />),
 ];
 
