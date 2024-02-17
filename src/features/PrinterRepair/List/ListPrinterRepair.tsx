@@ -5,7 +5,7 @@ import { find } from "lodash";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { problemIndustries, prinf } from "../../../assets/data";
+import { problemIndustries } from "../../../assets/data";
 import DynamicTable from "../../../components/DynamicTable";
 import PaginationCustom from "../../../components/Pagination/Pagination";
 import StatusTag from "../../../components/StatusTag/StatusTag";
@@ -33,22 +33,7 @@ const ListPrinterRepair = () => {
       key: "departmentName",
     },
     {
-      title: "Loại máy in",
-      dataIndex: "industry",
-      key: "industry",
-      render: (industry: string) => (
-        <span>
-          {
-            find(
-              prinf,
-              (problemIndustry) => problemIndustry.value === industry
-            )?.label
-          }
-        </span>
-      ),
-    },
-    {
-      title: "Vị trí",
+      title: "Máy in",
       dataIndex: "title",
       key: "title",
     },
@@ -89,7 +74,7 @@ const ListPrinterRepair = () => {
     refetch();
   }, [page, pageSize, refetch]);
 
-  const exportToExcel = ({dataToExport}) => {
+  const exportToExcel = (dataToExport) => {
     const ws = XLSX.utils.json_to_sheet(dataToExport);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");

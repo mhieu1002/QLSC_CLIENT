@@ -5,14 +5,11 @@ import "../../styles/index.scss";
 import { ROLE } from "../../constants/role";
 
 const Loading = () => {
-  // Thêm hàm kiểm tra quyền admin
+  // Kiểm tra quyền admin
   const checkRoleAdmin = useMemo(() => {
-    const userRole = localStorage.getItem("userRole"); // Thay "userRole" bằng key lưu trữ quyền của người dùng
-    console.log("userRole:", userRole);
-
-    // Kiểm tra xem người dùng có quyền Super Admin hay không
-    return userRole === ROLE.SUPER_ADMIN;
-  }, []); // Thay đổi chỉ khi component được tạo mới
+    const userRole = localStorage.getItem("userRole");
+    return userRole === ROLE.SUPER_ADMIN; // Thay ROLE.ADMIN bằng quyền admin của bạn
+  }, []);
 
   return (
     <div>
@@ -62,7 +59,7 @@ const Loading = () => {
           </div>
         </Col>
         
-        <Col span={4} className={checkRoleAdmin ? "" : ""}>
+        <Col span={4} className={!checkRoleAdmin ? "disabled" : ""}>
           <Link to="/">
             <div
               style={{

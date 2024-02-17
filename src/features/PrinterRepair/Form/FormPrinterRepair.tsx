@@ -3,11 +3,7 @@ import { Button, Col, Form, Input, Row, Select, message } from "antd";
 import { isNil, map } from "lodash";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  problemIndustries,
-  problemReciever,
-  prinf,
-} from "../../../assets/data";
+import { problemIndustries, problemReciever } from "../../../assets/data";
 import { ROLE } from "../../../constants/role";
 import { adminUserApi } from "../../../services/apis/adminUser";
 import { authApi } from "../../../services/apis/authApi";
@@ -86,7 +82,7 @@ const FormPrinterRepair = () => {
         updateProblemtMutation.mutate(formData, {
           onSuccess: () => {
             message.success("Cập nhật phiếu thành công");
-            navigate("/");
+            navigate("/sign-up-for-printer-repair");
           },
           onError: () => {
             message.error("Cập nhật phiếu thất bại");
@@ -96,7 +92,7 @@ const FormPrinterRepair = () => {
         createProblemMutation.mutate(formData, {
           onSuccess: () => {
             message.success("Tạo phiếu thành công");
-            navigate("/");
+            navigate("/sign-up-for-printer-repair");
           },
           onError: (error: any) => {
             const { data } = error;
@@ -151,32 +147,31 @@ const FormPrinterRepair = () => {
         <Row>
           <Col xl={12}>
             <Form.Item
-              label="Loại máy"
-              name="prinf"
-              rules={[{ required: true, message: "Vui lòng nhập loại máy" }]}
-            >
-              <Select
-                options={
-                  map(prinf, (printf) => {
-                    return {
-                      label: printf.label,
-                      value: printf.value,
-                    };
-                  }) ?? []
-                }
-              />
-            </Form.Item>
-          </Col>
-          <Col xl={12}>
-            <Form.Item
-              label="Vị trí"
+              label="Tên máy in"
               name="title"
               rules={[{ required: true, message: "Vui lòng nhập tên máy" }]}
             >
               <Input />
             </Form.Item>
           </Col>
-
+          <Col xl={12}>
+            <Form.Item
+              label="Lãnh vực"
+              name="industry"
+              rules={[{ required: true, message: "Vui lòng nhập lãnh vực" }]}
+            >
+              <Select
+                options={
+                  map(problemIndustries, (industry) => {
+                    return {
+                      label: industry.label,
+                      value: industry.value,
+                    };
+                  }) ?? []
+                }
+              />
+            </Form.Item>
+          </Col>
           <Col xl={12}>
             <Form.Item label="Chi tiết lỗi máy" name="note">
               <TextArea rows={4} />
@@ -267,7 +262,10 @@ const FormPrinterRepair = () => {
             </Col>
           )}
           <Col xl={12}>
-            <Form.Item label="Ghi chú" name="contact">
+            <Form.Item
+              label="Ghi chú"
+              name="contact"
+            >
               <TextArea rows={4} disabled={!checkRoleAdmin} />
             </Form.Item>
           </Col>
