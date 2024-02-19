@@ -20,6 +20,13 @@ const update = async (id: string, data: PrinfDto) => {
   return response;
 };
 
+const updateConfirm = async (id: string, data: {
+  isConfirmed: boolean
+}) => {
+  const response = await axiosInstance.patch(`/prinf/update-confirm/${id}`, data);
+  return response;
+};
+
 const getById = async (id: string) => {
   const response = await axiosInstance.get(`/prinf/${id}`);
   return response;
@@ -31,4 +38,5 @@ export const prinfApi = {
   create,
   getById,
   update,
+  updateConfirm
 };

@@ -9,17 +9,17 @@ import { problemIndustries } from "../../../assets/data";
 import DynamicTable from "../../../components/DynamicTable";
 import PaginationCustom from "../../../components/Pagination/Pagination";
 import StatusTag from "../../../components/StatusTag/StatusTag";
-import { problemApi } from "../../../services/apis/problem";
+import { prinfApi } from "../../../services/apis/prinf";
 import * as XLSX from "xlsx";
 
 const ListPrinterRepair = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10); //muốn 1 trang có bao nhiêu phần tử thì bỏ vào đây
-  const { data: problems, refetch } = useQuery({
-    queryKey: ["problems"],
+  const { data: prinfs, refetch } = useQuery({
+    queryKey: ["prinfs"],
     queryFn: () =>
-      problemApi.getAll({
+      prinfApi.getAll({
         page: page,
         limit: pageSize,
       }),
@@ -34,8 +34,13 @@ const ListPrinterRepair = () => {
     },
     {
       title: "Máy in",
-      dataIndex: "title",
-      key: "title",
+      dataIndex: "prinf",
+      key: "prinf",
+    },
+    {
+      title: "Phòng",
+      dataIndex: "location",
+      key: "location",
     },
     {
       title: "Ngày đề xuất",
@@ -78,7 +83,7 @@ const ListPrinterRepair = () => {
     const ws = XLSX.utils.json_to_sheet(dataToExport);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-    XLSX.writeFile(wb, "problems.xlsx");
+    XLSX.writeFile(wb, "prinf.xlsx");
   };
 
   return (
@@ -90,7 +95,7 @@ const ListPrinterRepair = () => {
         <Button
           type="primary"
           style={{ margin: "0 30px", height: "35px" }}
-          onClick={() => exportToExcel(problems?.data.problems)}
+          onClick={() => exportToExcel(prinfs?.data.prinfs)}
         >
           <VerticalAlignBottomOutlined /> Excel
         </Button>
@@ -105,7 +110,7 @@ const ListPrinterRepair = () => {
         </Button>
       </div>
       <DynamicTable
-        dataSource={problems?.data.problems}
+        dataSource={prinfs?.data.prinfs}
         columns={columns}
         onRow={(record) => {
           navigate(`/sign-up-for-printer-repair/${record.id}`);
@@ -113,7 +118,7 @@ const ListPrinterRepair = () => {
       />
       <div style={{ marginTop: "5px" }}></div>
       <PaginationCustom
-        total={problems?.data?.meta?.total}
+        total={prinfs?.data?.meta?.total}
         current={page}
         pageSize={pageSize}
         onChange={(page: number, pageSize: number) => {

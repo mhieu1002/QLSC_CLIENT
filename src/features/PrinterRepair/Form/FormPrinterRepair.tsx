@@ -1,15 +1,21 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Col, Form, Input, Row, Select, message } from "antd";
 import { isNil, map } from "lodash";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { problemIndustries, problemReciever } from "../../../assets/data";
+import {
+  problemIndustries,
+  problemReciever,
+  prinf,
+} from "../../../assets/data";
 import { ROLE } from "../../../constants/role";
 import { adminUserApi } from "../../../services/apis/adminUser";
 import { authApi } from "../../../services/apis/authApi";
 import { departmentApi } from "../../../services/apis/departmentApi";
 import { problemApi } from "../../../services/apis/problem";
 import { ProblemDto } from "../../../types/problem";
+import { prinfApi } from "../../../services/apis/prinf";
+import { PrinfDto } from "../../../types/prinf";
 import { PROBLEM_STATUS } from "../../../constants/problem";
 
 const { TextArea } = Input;
@@ -35,51 +41,59 @@ const FormPrinterRepair = () => {
     enabled: user?.data?.role === ROLE.SUPER_ADMIN,
   });
 
-  const { data: problem } = useQuery({
-    queryKey: ["problem", id],
-    queryFn: () => problemApi.getById(id as string),
+  const { data: prinf } = useQuery({
+    queryKey: ["prinf", id],
+    queryFn: () => prinfApi.getById(id as string),
     enabled: !isNil(id),
   });
 
-  const createProblemMutation = useMutation({
-    mutationFn: (values: ProblemDto) => {
-      return problemApi.create(values);
+  const createPrinfMutation = useMutation({
+    mutationFn: (values: PrinfDto) => {
+      return prinfApi.create(values);
     },
   });
 
-  const updateProblemtMutation = useMutation({
-    mutationFn: (values: ProblemDto) => {
-      return problemApi.update(id as string, values);
+  const updatePrinftMutation = useMutation({
+    mutationFn: (values: PrinfDto) => {
+      return prinfApi.update(id as string, values);
+    },
+  });
+
+  const updateConfirmPrinftMutation = useMutation({
+    mutationFn: (values: { isConfirmed: boolean }) => {
+      return prinfApi.updateConfirm(id as string, values);
     },
   });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialValues = {
-    title: problem?.data?.title ?? "",
-    industry: problem?.data?.industry ?? "",
-    contact: problem?.data?.contact ?? "",
-    status: problem?.data?.status ?? "",
-    note: problem?.data?.note ?? "",
-    adminUserId: problem?.data?.adminUserId ?? "",
-    departmentId: problem?.data?.departmentId ?? "",
-    reciever: problem?.data?.reciever ?? "",
+    prinf: prinf?.data?.prinf ?? "",
+    location: prinf?.data?.location ?? "",
+    noteUser: prinf?.data?.noteUser ?? "",
+    status: prinf?.data?.status ?? "",
+    noteAdmin: prinf?.data?.noteAdmin ?? "",
+    adminUserId: prinf?.data?.adminUserId ?? "",
+    departmentId: prinf?.data?.departmentId ?? "",
+    reciever: prinf?.data?.reciever ?? "",
+    isConfirmed: prinf?.data?.isConfirmed ?? "",
   };
 
   const handleFinish = useCallback(
-    (values: ProblemDto) => {
+    (values: PrinfDto) => {
       const formData = {
-        title: values.title,
-        industry: values.industry,
-        contact: values.contact,
+        prinf: values.prinf,
+        location: values.location,
+        noteUser: values.noteUser,
         status: values.status,
-        note: values.note,
+        noteAdmin: values.noteAdmin,
         reciever: values.reciever ?? "",
         adminUserId: values.adminUserId ?? user?.data?.id,
         departmentId: values.departmentId ?? user?.data?.departmentId,
+        isConfirmed: values.departmentId ?? user?.data?.isConfirmed,
       };
 
       if (id) {
-        updateProblemtMutation.mutate(formData, {
+        updatePrinftMutation.mutate(formData, {
           onSuccess: () => {
             message.success("Cập nhật phiếu thành công");
             navigate("/sign-up-for-printer-repair");
@@ -89,7 +103,7 @@ const FormPrinterRepair = () => {
           },
         });
       } else {
-        createProblemMutation.mutate(formData, {
+        createPrinfMutation.mutate(formData, {
           onSuccess: () => {
             message.success("Tạo phiếu thành công");
             navigate("/sign-up-for-printer-repair");
@@ -110,6 +124,29 @@ const FormPrinterRepair = () => {
     console.log("Failed:", errorInfo);
   };
 
+  const handleConfirmReturnPrinter = () => {
+    try {
+      // Cập nhật trường isConfirmed thành true, viết 1 api chỉ update trường đó thôi, viết update đó no có hiểu gì đâu? này update này update tổng thì mấy kia d
+      updateConfirmPrinftMutation.mutate(
+        { isConfirmed: true },
+        {
+          onSuccess: () => {
+            message.success("Đã trả máy in về khoa");
+          },
+          onError: () => {
+            message.error("Cập nhật thất bại");
+          },
+        }
+      );
+
+      // Hiển thị thông báo đã trả máy in về khoa
+    } catch (error) {
+      // Xử lý lỗi nếu có
+      console.error("Lỗi khi xác nhận trả máy in:", error);
+      message.error("Đã xảy ra lỗi khi xác nhận trả máy in");
+    }
+  };
+
   const checkRoleAdmin = useMemo(() => {
     if (user?.data?.role === ROLE.SUPER_ADMIN) {
       return true;
@@ -126,6 +163,14 @@ const FormPrinterRepair = () => {
       form.setFieldsValue(initialValues);
     }
   }, [form, initialValues]);
+
+  const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (prinf?.data?.isConfirmed !== undefined) {
+      setIsConfirmed(prinf.data.isConfirmed);
+    }
+  }, [prinf]);
 
   return (
     <section>
@@ -148,7 +193,7 @@ const FormPrinterRepair = () => {
           <Col xl={12}>
             <Form.Item
               label="Tên máy in"
-              name="title"
+              name="prinf"
               rules={[{ required: true, message: "Vui lòng nhập tên máy" }]}
             >
               <Input />
@@ -156,24 +201,15 @@ const FormPrinterRepair = () => {
           </Col>
           <Col xl={12}>
             <Form.Item
-              label="Lãnh vực"
-              name="industry"
-              rules={[{ required: true, message: "Vui lòng nhập lãnh vực" }]}
+              label="Phòng"
+              name="location"
+              rules={[{ required: true, message: "Vui lòng nhập phòng" }]}
             >
-              <Select
-                options={
-                  map(problemIndustries, (industry) => {
-                    return {
-                      label: industry.label,
-                      value: industry.value,
-                    };
-                  }) ?? []
-                }
-              />
+              <Input />
             </Form.Item>
           </Col>
           <Col xl={12}>
-            <Form.Item label="Chi tiết lỗi máy" name="note">
+            <Form.Item label="Chi tiết lỗi máy" name="noteUser">
               <TextArea rows={4} />
             </Form.Item>
           </Col>
@@ -262,13 +298,25 @@ const FormPrinterRepair = () => {
             </Col>
           )}
           <Col xl={12}>
-            <Form.Item
-              label="Ghi chú"
-              name="contact"
-            >
+            <Form.Item label="Ghi chú" name="noteAdmin">
               <TextArea rows={4} disabled={!checkRoleAdmin} />
             </Form.Item>
           </Col>
+          {user?.data.role !== ROLE.SUPER_ADMIN &&
+            prinf?.data?.status === "processed" && (
+              <Col xl={12}>
+                <Form.Item label="Xác nhận trả máy in" name="isConfirmed">
+                  <Button type="primary" onClick={handleConfirmReturnPrinter}>
+                    Xác nhận
+                  </Button>
+                  <span style={{ paddingLeft: "10px" }}>
+                    {isConfirmed
+                      ? "Đã trả máy về khoa"
+                      : "Chưa trả máy về khoa"}
+                  </span>
+                </Form.Item>
+              </Col>
+            )}
         </Row>
 
         <Form.Item wrapperCol={{ offset: 9, span: 16 }}>
@@ -278,8 +326,8 @@ const FormPrinterRepair = () => {
               htmlType="submit"
               disabled={
                 // t push code cho m rồi á,
-                (!checkRoleAdmin && problem?.data?.status === "processing") ||
-                (!checkRoleAdmin && problem?.data?.status === "processed")
+                (!checkRoleAdmin && prinf?.data?.status === "processing") ||
+                (!checkRoleAdmin && prinf?.data?.status === "processed")
               }
             >
               Cập nhật

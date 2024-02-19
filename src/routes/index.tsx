@@ -5,6 +5,7 @@ import { TRoute } from "../types/route";
 import DashboardLayout from "../layouts/DashboardLayout";
 import PrinterRepair from "../pages/PrinterRepair/PrinterRepair";
 import loading from "../pages/load/loading";
+import MeetingRepair from "../pages/meeting/MeetingRepair";
 
 const Login = lazy(() => import("../pages/Login"));
 const Employee = lazy(() => import("../pages/Employee/Employee"));
@@ -14,6 +15,7 @@ const FormDepartment = lazy(() => import("../pages/Department/FormDepartment"));
 const Problem = lazy(() => import("../pages/Problem/Problem"));
 const FormProblem = lazy(() => import("../pages/Problem/FormProblem"));
 const FormPrinterRepair = lazy(() => import("../pages/PrinterRepair/FormPrinterRepair"));
+const FormMeetingRepair = lazy(() => import("../pages/meeting/FormMeeting"));
 const ProblemReportByDepartment = lazy(
   () => import("../pages/Problem/ProblemReportByDepartment")
 );
@@ -37,6 +39,23 @@ const routes: TRoute[] = [
     path: "/statistical",
     element: ProblemStatistical,
     layout: DashboardLayout,
+  },
+  {
+    path: "/meeting-schedule",
+    element: MeetingRepair,
+    layout: DashboardLayout,
+    subRoutes: [
+      {
+        path: "/add",
+        element: FormMeetingRepair,
+        layout: DashboardLayout,
+      },
+      {
+        path: "/:id",
+        element: FormMeetingRepair,
+        layout: DashboardLayout,
+      },
+    ],
   },
   {
     path: "/sign-up-for-printer-repair",

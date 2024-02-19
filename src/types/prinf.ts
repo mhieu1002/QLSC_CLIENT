@@ -7,7 +7,6 @@ type PrinfDto = {
   location: string;
   noteUser: string;
   status: string;
-  processingDate: string;
   noteAdmin: string;
   reciever: string;
   isConfirmed: string;
