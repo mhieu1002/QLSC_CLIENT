@@ -77,6 +77,15 @@ const ListEmployee = () => {
           Thêm nhân viên
         </Button>
       </div>
+      <h2
+        style={{
+          paddingTop: "70px",
+          paddingBottom: "10px",
+          paddingLeft: "10px",
+        }}
+      >
+        Danh sách nhân viên
+      </h2>
       <DynamicTable
         dataSource={adminUsers?.data.adminUsers}
         columns={columns}

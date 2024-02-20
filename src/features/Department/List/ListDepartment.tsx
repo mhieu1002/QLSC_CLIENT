@@ -57,6 +57,15 @@ const ListDepartment = () => {
           Thêm Khoa
         </Button>
       </div>
+      <h2
+        style={{
+          paddingTop: "70px",
+          paddingBottom: "10px",
+          paddingLeft: "10px",
+        }}
+      >
+        Danh sách khoa
+      </h2>
       <DynamicTable
         dataSource={departments?.data.departments}
         columns={columns}

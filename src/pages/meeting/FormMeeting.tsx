@@ -1,9 +1,9 @@
-import FormDataPrinterRepair from "../../features/PrinterRepair/Form";
+import FormMeet from "../../features/Meeting/Form/FormMeeting";
 
 const FormMeeting = () => {
   return (
     <main>
-      <FormDataPrinterRepair />
+      <FormMeet />
     </main>
   );
 };

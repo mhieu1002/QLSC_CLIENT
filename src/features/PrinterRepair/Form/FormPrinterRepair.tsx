@@ -174,7 +174,7 @@ const FormPrinterRepair = () => {
 
   return (
     <section>
-      <h1 style={{ padding: "15px 0", letterSpacing: "2px" }}>
+      <h1 style={{ padding: "15px 0", letterSpacing: "1px" }}>
         Form {id ? "Cập nhật phiếu " : ""} đăng ký sửa máy in
       </h1>
 
@@ -302,21 +302,18 @@ const FormPrinterRepair = () => {
               <TextArea rows={4} disabled={!checkRoleAdmin} />
             </Form.Item>
           </Col>
-          {user?.data.role !== ROLE.SUPER_ADMIN &&
-            prinf?.data?.status === "processed" && (
-              <Col xl={12}>
-                <Form.Item label="Xác nhận trả máy in" name="isConfirmed">
-                  <Button type="primary" onClick={handleConfirmReturnPrinter}>
-                    Xác nhận
-                  </Button>
-                  <span style={{ paddingLeft: "10px" }}>
-                    {isConfirmed
-                      ? "Đã trả máy về khoa"
-                      : "Chưa trả máy về khoa"}
-                  </span>
-                </Form.Item>
-              </Col>
-            )}
+          {prinf?.data?.status === "processed" && (
+            <Col xl={12}>
+              <Form.Item label="" name="isConfirmed">
+                <Button type="primary" onClick={handleConfirmReturnPrinter} disabled={checkRoleAdmin}>
+                  Xác nhận trả máy in
+                </Button>
+                <span style={{ paddingLeft: "10px" }}>
+                  {isConfirmed ? "Đã trả máy về khoa" : "Chưa trả máy về khoa"}
+                </span>
+              </Form.Item>
+            </Col>
+          )}
         </Row>
 
         <Form.Item wrapperCol={{ offset: 9, span: 16 }}>

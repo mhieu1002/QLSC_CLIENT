@@ -119,6 +119,15 @@ const ListProblem = () => {
           Thêm sự cố
         </Button>
       </div>
+      <h2
+        style={{
+          paddingTop: "70px",
+          paddingBottom: "10px",
+          paddingLeft: "10px",
+        }}
+      >
+        Phiếu ghi nhận sự cố
+      </h2>
       <DynamicTable
         dataSource={problems?.data.problems}
         columns={columns}

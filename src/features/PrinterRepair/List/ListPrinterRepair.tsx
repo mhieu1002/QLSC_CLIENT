@@ -109,6 +109,15 @@ const ListPrinterRepair = () => {
           Đăng ký sửa máy in
         </Button>
       </div>
+      <h2
+        style={{
+          paddingTop: "70px",
+          paddingBottom: "10px",
+          paddingLeft: "10px",
+        }}
+      >
+        Đăng ký sửa máy in
+      </h2>
       <DynamicTable
         dataSource={prinfs?.data.prinfs}
         columns={columns}

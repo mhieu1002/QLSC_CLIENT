@@ -1,9 +1,9 @@
-import ListPrinterRepair from "../../features/PrinterRepair/List/ListPrinterRepair";
+import ListMeeting from "../../features/Meeting/List/ListMeeting";
 
 const MeetingRepair = () => {
   return (
     <main>
-      <ListPrinterRepair/>
+      <ListMeeting/>
     </main>
   );
 };
