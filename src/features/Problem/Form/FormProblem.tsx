@@ -130,7 +130,7 @@ const FormProblem = () => {
   return (
     <section>
       <h1 style={{ padding: "15px 0", letterSpacing: "1px" }}>
-        Form {id ? "sửa" : "thêm"} phiếu ghi nhận sự cố
+        {id ? "Cập nhật" : "Tạo"} phiếu ghi nhận sự cố
       </h1>
 
       <Form

@@ -43,7 +43,7 @@ const ListPrinterRepair = () => {
       key: "location",
     },
     {
-      title: "Ngày đề xuất",
+      title: "Ngày đăng ký",
       dataIndex: "createdAt",
       key: "createdAt",
       render: (createdAt: string) => (
@@ -51,7 +51,7 @@ const ListPrinterRepair = () => {
       ),
     },
     {
-      title: "Người đề xuất",
+      title: "Người đăng ký",
       dataIndex: "adminUserName",
       key: "adminUserName",
     },

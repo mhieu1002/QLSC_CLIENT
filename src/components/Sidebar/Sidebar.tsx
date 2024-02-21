@@ -5,8 +5,7 @@ import {
   TeamOutlined,
   PrinterOutlined,
   CalendarOutlined,
-  PushpinOutlined
-  
+  PushpinOutlined,
 } from "@ant-design/icons";
 import { Menu, MenuProps } from "antd";
 import MenuItem from "antd/es/menu/MenuItem";
@@ -35,23 +34,34 @@ function getItem(
 
 const adminItem = [
   getItem("Phiếu ghi nhận sự cố", "/", <FormOutlined />),
-  getItem("Đăng ký sửa máy in", "/sign-up-for-printer-repair", <PrinterOutlined />),
+  getItem(
+    "Đăng ký sửa máy in",
+    "/sign-up-for-printer-repair",
+    <PrinterOutlined />
+  ),
   getItem("Lịch", "calendar", <CalendarOutlined />, [
     getItem("Lịch họp", "/meeting-schedule"),
-  ]),
-  getItem("Báo cáo sự cố", "sub1", <FileSearchOutlined />, [
-    getItem("Báo cáo theo khoa", "/problem-report-department"),
-    getItem("Báo cáo theo lãnh vực", "/problem-report-industry"),
   ]),
   getItem("Quản lý khoa", "department", <TeamOutlined />, [
     getItem("Danh sách khoa", "/department"),
     getItem("Danh sách nhân viên", "/employee"),
   ]),
-
+  getItem("Báo cáo", "sub1", <FileSearchOutlined />, [
+    getItem("Báo cáo sự cố theo khoa", "/problem-report-department"),
+    getItem("Báo cáo sự cố theo lãnh vực", "/problem-report-industry"),
+  ]),
   getItem("Thống kê", "/statistical", <BarChartOutlined />),
 ];
 
-const employeeItems = [getItem("Phiếu ghi nhận sự cố", "/", <FormOutlined />), getItem("Đăng ký sửa máy in", "/sign-up-for-printer-repair", <PrinterOutlined />),];
+const employeeItems = [
+  getItem("Phiếu ghi nhận sự cố", "/", <FormOutlined />),
+  getItem(
+    "Đăng ký sửa máy in",
+    "/sign-up-for-printer-repair",
+    <PrinterOutlined />
+  ),
+  getItem("Lịch họp", "/meeting-schedule", <TeamOutlined />),
+];
 
 const Sidebar: React.FC = () => {
   const user = useAuth();

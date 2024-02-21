@@ -12,8 +12,6 @@ import { ROLE } from "../../../constants/role";
 import { adminUserApi } from "../../../services/apis/adminUser";
 import { authApi } from "../../../services/apis/authApi";
 import { departmentApi } from "../../../services/apis/departmentApi";
-import { problemApi } from "../../../services/apis/problem";
-import { ProblemDto } from "../../../types/problem";
 import { prinfApi } from "../../../services/apis/prinf";
 import { PrinfDto } from "../../../types/prinf";
 import { PROBLEM_STATUS } from "../../../constants/problem";
@@ -175,7 +173,7 @@ const FormPrinterRepair = () => {
   return (
     <section>
       <h1 style={{ padding: "15px 0", letterSpacing: "1px" }}>
-        Form {id ? "Cập nhật phiếu " : ""} đăng ký sửa máy in
+        {id ? "Cập nhật" : "Đăng ký"}  phiếu sửa máy in
       </h1>
 
       <Form
