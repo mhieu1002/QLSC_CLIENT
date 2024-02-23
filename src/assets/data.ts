@@ -38,7 +38,7 @@ const problemIndustries = [
 
 ];
 
-const prinf = [
+const prinfs = [
   {
     label: "Canon 2900",
     value: "Canon 2900",
@@ -62,6 +62,17 @@ const problemRole = [
   {
     label: "Điều dưỡng",
     value: "Điều dưỡng",
+  },
+];
+
+const meeting = [
+  {
+    label: "Hội trường A",
+    value: "Hội trường A",
+  },
+  {
+    label: "Hội trường B",
+    value: "Hội trường B",
   },
 ];
 
@@ -112,4 +123,4 @@ const problemReciever = [
   },
 ];
 
-export { problemIndustries, problemRole, problemReciever, prinf };
+export { problemIndustries, problemRole, problemReciever, prinfs, meeting };

@@ -17,3 +17,5 @@ type MeetQueryParams = IQueryParams & {
   departmentId?: number;
   industry?: string;
 };
+
+export type { MeetDto, MeetQueryParams  };

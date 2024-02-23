@@ -1,15 +1,45 @@
-import React, { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Col, Row } from "antd";
 import { Link } from "react-router-dom";
 import "../../styles/index.scss";
 import { ROLE } from "../../constants/role";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { isNil, map } from "lodash";
+import { useNavigate, useParams } from "react-router-dom";
+import { adminUserApi } from "../../services/apis/adminUser";
+import { authApi } from "../../services/apis/authApi";
+import { departmentApi } from "../../services/apis/departmentApi";
 
 const Loading = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { data: user } = useQuery({
+    queryKey: ["getProfile"],
+    queryFn: () => authApi.getProfile(),
+  });
+
+  const { data: adminUsers } = useQuery({
+    queryKey: ["adminUsers"],
+    queryFn: () => adminUserApi.getAllNoPagination(),
+    enabled: user?.data?.role === ROLE.SUPER_ADMIN,
+  });
+
+  const { data: departments } = useQuery({
+    queryKey: ["departments"],
+    queryFn: () => departmentApi.getAllNoPagination(),
+    enabled: user?.data?.role === ROLE.SUPER_ADMIN,
+  });
   // Kiểm tra quyền admin
   const checkRoleAdmin = useMemo(() => {
-    const userRole = localStorage.getItem("userRole");
-    return userRole === ROLE.SUPER_ADMIN; // Thay ROLE.ADMIN bằng quyền admin của bạn
-  }, []);
+    if (user?.data?.role === ROLE.SUPER_ADMIN) {
+      return true;
+    }
+    return false;
+  }, [user?.data?.role]);
+  console.log(
+    "🚀 ~ file: FormProblem.tsx:125 ~ checkRoleAdmin ~ checkRoleAdmin:",
+    checkRoleAdmin
+  );
 
   return (
     <div>
@@ -58,8 +88,8 @@ const Loading = () => {
             Khách hàng
           </div>
         </Col>
-        
-        <Col span={4} className={!checkRoleAdmin ? "disabled" : ""}>
+
+        <Col span={4} className={user?.data.role === ROLE.SUPER_ADMIN ? "disabled" : ""}>
           <Link to="/">
             <div
               style={{
@@ -91,7 +121,7 @@ const Loading = () => {
             Bác sĩ
           </div>
         </Col>
-        
+
         <Col span={4}>
           <Link to="/">
             <div
@@ -123,7 +153,7 @@ const Loading = () => {
             Điều dưỡng
           </div>
         </Col>
-        
+
         <Col span={4}>
           <Link to="/">
             <div

@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   problemIndustries,
   problemReciever,
-  prinf,
+  prinfs,
 } from "../../../assets/data";
 import { ROLE } from "../../../constants/role";
 import { adminUserApi } from "../../../services/apis/adminUser";
@@ -87,7 +87,7 @@ const FormPrinterRepair = () => {
         reciever: values.reciever ?? "",
         adminUserId: values.adminUserId ?? user?.data?.id,
         departmentId: values.departmentId ?? user?.data?.departmentId,
-        isConfirmed: values.departmentId ?? user?.data?.isConfirmed,
+        isConfirmed: values.isConfirmed ?? user?.data?.isConfirmed,
       };
 
       if (id) {
@@ -194,7 +194,17 @@ const FormPrinterRepair = () => {
               name="prinf"
               rules={[{ required: true, message: "Vui lòng nhập tên máy" }]}
             >
-              <Input />
+              <Select
+                placeholder="Chọn máy in"
+                options={
+                  map(prinfs, (prinf) => {
+                    return {
+                      label: prinf.label,
+                      value: prinf.value,
+                    };
+                  }) ?? []
+                }
+              />
             </Form.Item>
           </Col>
           <Col xl={12}>
@@ -261,7 +271,7 @@ const FormPrinterRepair = () => {
               <Form.Item
                 label="Khoa"
                 name="departmentId"
-                rules={[{ required: true, message: "Vui lòng chọn nhân viên" }]}
+                rules={[{ required: true, message: "Vui lòng chọn khoa" }]}
               >
                 <Select
                   placeholder="Chọn nhân viên"

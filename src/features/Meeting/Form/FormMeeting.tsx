@@ -4,11 +4,11 @@ import { isNil, map } from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { DatePicker, Space } from "antd";
-import type { DatePickerProps, GetProps } from "antd";
+import type { DatePickerProps } from "antd";
 import {
   problemIndustries,
   problemReciever,
-  prinf,
+  meeting,
 } from "../../../assets/data";
 import { ROLE } from "../../../constants/role";
 import { adminUserApi } from "../../../services/apis/adminUser";
@@ -16,9 +16,6 @@ import { authApi } from "../../../services/apis/authApi";
 import { departmentApi } from "../../../services/apis/departmentApi";
 import { meetApi } from "../../../services/apis/meet";
 import { MeetDto } from "../../../types/meet";
-import { PROBLEM_STATUS } from "../../../constants/problem";
-
-type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 
 const { RangePicker } = DatePicker;
 
@@ -27,6 +24,8 @@ const { TextArea } = Input;
 const FormMeeting = () => {
   const [form] = Form.useForm();
   const { id } = useParams();
+  const [startTime, setStartTime] = useState<Date>();
+  const [endTime, setEndTime] = useState<Date>();
   const navigate = useNavigate();
   const { data: user } = useQuery({
     queryKey: ["getProfile"],
@@ -83,16 +82,26 @@ const FormMeeting = () => {
 
   const handleFinish = useCallback(
     (values: MeetDto) => {
+      // Sử dụng giá trị startTime và endTime từ state
       const formData = {
         title: values.title,
-        startTime: values.startTime,
-        endTime: values.endTime,
+        startTime: startTime,
+        endTime: endTime,
         host: values.host,
         room: values.room,
         adminUserId: values.adminUserId ?? user?.data?.id,
         departmentId: values.departmentId ?? user?.data?.departmentId,
-        participants: values.participants 
+        participants: values.participants,
       };
+
+      // Kiểm tra xem startTime và endTime có giá trị không
+      if (!startTime || !endTime) {
+        // Thông báo cho người dùng cung cấp giá trị cho startTime và endTime
+        message.error("Vui lòng chọn thời gian bắt đầu và kết thúc");
+        return; // Dừng hàm ở đây nếu không có giá trị cho startTime hoặc endTime
+      }
+
+      console.log("🚀 ~ FormMeeting ~ formData:", formData);
 
       if (id) {
         // updatePrinftMutation.mutate(formData, {
@@ -107,10 +116,11 @@ const FormMeeting = () => {
       } else {
         createMeetMutation.mutate(formData, {
           onSuccess: () => {
-            message.success("Tạo phiếu thành công");
+            message.success("Tạo lịch họp thành công");
             navigate("/sign-up-for-printer-repair");
           },
           onError: (error: any) => {
+            message.error("Trùng lịch họp");
             const { data } = error;
             if (data?.response?.data?.statusCode === 401) {
               message.error("Lỗi rồi");
@@ -119,7 +129,7 @@ const FormMeeting = () => {
         });
       }
     },
-    [id, user?.data?.id]
+    [id, user?.data?.id, startTime, endTime]
   );
 
   const onFinishFailed = (errorInfo: any) => {
@@ -127,16 +137,22 @@ const FormMeeting = () => {
   };
 
   const onChange = (dates: any, dateStrings: [string, string]) => {
-    console.log('Selected Time:', dates);
-    console.log('Formatted Selected Time:', dateStrings);
-    form.setFieldsValue({
-      startTime: dateStrings[0], // Gán thời gian bắt đầu vào trường startTime
-      endTime: dateStrings[1], // Gán thời gian kết thúc vào trường endTime
-    });
+    console.log("🚀 ~ onChange ~ dateStrings:", dateStrings);
+    console.log("🚀 ~ onChange ~ dates:", dates);
+    const startDate = new Date(dateStrings[0]);
+    const endDate = new Date(dateStrings[1]);
+
+    setStartTime(startDate);
+    setEndTime(endDate);
+
+    // form.setFieldsValue({
+    //   startTime: dateStrings[0], // Gán thời gian bắt đầu vào trường startTime
+    //   endTime: dateStrings[1], // Gán thời gian kết thúc vào trường endTime
+    // });
   };
 
   const onOk = (dates: any) => {
-    console.log('onOk:', dates);
+    console.log("onOk:", dates);
   };
 
   // const handleConfirmReturnPrinter = () => {
@@ -173,11 +189,11 @@ const FormMeeting = () => {
     checkRoleAdmin
   );
 
-  useEffect(() => {
-    if (initialValues) {
-      form.setFieldsValue(initialValues);
-    }
-  }, [form, initialValues]);
+  // useEffect(() => {
+  //   if (initialValues) {
+  //     form.setFieldsValue(initialValues);
+  //   }
+  // }, [form, initialValues]);
 
   return (
     <section>
@@ -201,7 +217,9 @@ const FormMeeting = () => {
             <Form.Item
               label="Tiêu đề"
               name="title"
-              rules={[{ required: true, message: "Vui lòng nhập tiêu đề phòng họp" }]}
+              rules={[
+                { required: true, message: "Vui lòng nhập tiêu đề phòng họp" },
+              ]}
             >
               <Input />
             </Form.Item>
@@ -209,12 +227,12 @@ const FormMeeting = () => {
           <Col xl={12}>
             <Form.Item label="Phòng họp" name="room">
               <Select
-                placeholder="Chọn người tiếp nhận"
+                placeholder="Chọn phòng"
                 options={
-                  map(problemReciever, (reciever) => {
+                  map(meeting, (meeting) => {
                     return {
-                      label: reciever.label,
-                      value: reciever.value,
+                      label: meeting.label,
+                      value: meeting.value,
                     };
                   }) ?? []
                 }
@@ -231,10 +249,52 @@ const FormMeeting = () => {
               <TextArea rows={4} />
             </Form.Item>
           </Col>
+          {user?.data.role === ROLE.SUPER_ADMIN && (
+            <Col xl={12}>
+              <Form.Item
+                label="Nhân viên"
+                name="adminUserId"
+                rules={[{ required: true, message: "Vui lòng chọn nhân viên" }]}
+              >
+                <Select
+                  placeholder="Chọn nhân viên"
+                  options={
+                    map(adminUsers?.data, (adminUser) => {
+                      return {
+                        label: adminUser.fullName,
+                        value: adminUser.id,
+                      };
+                    }) ?? []
+                  }
+                />
+              </Form.Item>
+            </Col>
+          )}
+          {user?.data.role === ROLE.SUPER_ADMIN && (
+            <Col xl={12}>
+              <Form.Item
+                label="Khoa"
+                name="departmentId"
+                rules={[{ required: true, message: "Vui lòng chọn khoa" }]}
+              >
+                <Select
+                  placeholder="Chọn nhân viên"
+                  options={
+                    map(departments?.data, (department) => {
+                      return {
+                        label: department.name,
+                        value: department.id,
+                      };
+                    }) ?? []
+                  }
+                />
+              </Form.Item>
+            </Col>
+          )}
           <Col xl={12}>
             <Form.Item
               label="Thời gian bắt đầu - Thời gian kết thúc"
-              name={["startTime", "endTime"]}
+              name="rangePicker"
             >
               <Space direction="vertical" size={12}>
                 <RangePicker
@@ -250,10 +310,7 @@ const FormMeeting = () => {
 
         <Form.Item wrapperCol={{ offset: 9, span: 16 }}>
           {id ? (
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
+            <Button type="primary" htmlType="submit">
               Cập nhật
             </Button>
           ) : (
