@@ -117,7 +117,7 @@ const FormMeeting = () => {
         createMeetMutation.mutate(formData, {
           onSuccess: () => {
             message.success("Tạo lịch họp thành công");
-            navigate("/sign-up-for-printer-repair");
+            navigate("/meeting-schedule");
           },
           onError: (error: any) => {
             message.error("Trùng lịch họp");
