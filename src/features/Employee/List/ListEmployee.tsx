@@ -43,6 +43,11 @@ const ListEmployee = () => {
       key: "userName",
     },
     {
+      title: "Chức vụ",
+      dataIndex: "role",
+      key: "role",
+    },
+    {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
@@ -64,9 +69,9 @@ const ListEmployee = () => {
   return (
     <main>
       <div style={{ padding: "20px 0", float: "right" }}>
-        <Button type="primary" style={{ height: "35px", marginRight: "30px" }}>
+        {/* <Button type="primary" style={{ height: "35px", marginRight: "30px" }}>
           Tìm kiếm
-        </Button>
+        </Button> */}
         <Button
           type="primary"
           style={{ height: "35px" }}

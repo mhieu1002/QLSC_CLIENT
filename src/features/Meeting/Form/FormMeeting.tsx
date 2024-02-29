@@ -21,6 +21,8 @@ const { RangePicker } = DatePicker;
 
 const { TextArea } = Input;
 
+const { Option } = Select;
+
 const FormMeeting = () => {
   const [form] = Form.useForm();
   const { id } = useParams();
@@ -56,17 +58,12 @@ const FormMeeting = () => {
     },
   });
 
-  // const updatePrinftMutation = useMutation({
-  //   mutationFn: (values: PrinfDto) => {
-  //     return prinfApi.update(id as string, values);
-  //   },
-  // });
+  const updateMeet = useMutation({
+    mutationFn: (values: MeetDto) => {
+      return meetApi.update(id as string, values);
+    },
+  });
 
-  // const updateConfirmPrinftMutation = useMutation({
-  //   mutationFn: (values: { isConfirmed: boolean }) => {
-  //     return prinfApi.updateConfirm(id as string, values);
-  //   },
-  // });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialValues = {
@@ -85,8 +82,8 @@ const FormMeeting = () => {
       // Sử dụng giá trị startTime và endTime từ state
       const formData = {
         title: values.title,
-        startTime: startTime,
-        endTime: endTime,
+        startTime: startTime ? startTime.toISOString() : '', // Chuyển đổi startTime từ Date sang string
+        endTime: endTime ? endTime.toISOString() : '', // Chuyển đổi endTime từ Date sang string
         host: values.host,
         room: values.room,
         adminUserId: values.adminUserId ?? user?.data?.id,
@@ -104,15 +101,15 @@ const FormMeeting = () => {
       console.log("🚀 ~ FormMeeting ~ formData:", formData);
 
       if (id) {
-        // updatePrinftMutation.mutate(formData, {
-        //   onSuccess: () => {
-        //     message.success("Cập nhật phiếu thành công");
-        //     navigate("/sign-up-for-printer-repair");
-        //   },
-        //   onError: () => {
-        //     message.error("Cập nhật phiếu thất bại");
-        //   },
-        // });
+        updateMeet.mutate(formData, {
+          onSuccess: () => {
+            message.success("Cập nhật phiếu thành công");
+            navigate("/sign-up-for-printer-repair");
+          },
+          onError: () => {
+            message.error("Cập nhật phiếu thất bại");
+          },
+        });
       } else {
         createMeetMutation.mutate(formData, {
           onSuccess: () => {
@@ -193,6 +190,9 @@ const FormMeeting = () => {
   //   if (initialValues) {
   //     form.setFieldsValue(initialValues);
   //   }
+  //   else{
+  //     form.setFieldsValue(initialValues);
+  //   } 
   // }, [form, initialValues]);
 
   return (
@@ -227,6 +227,7 @@ const FormMeeting = () => {
           <Col xl={12}>
             <Form.Item label="Phòng họp" name="room">
               <Select
+                showSearch
                 placeholder="Chọn phòng"
                 options={
                   map(meeting, (meeting) => {

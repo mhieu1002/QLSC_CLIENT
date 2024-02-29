@@ -41,6 +41,8 @@ const Loading = () => {
     checkRoleAdmin
   );
 
+  console.log(user?.data.role);
+
   return (
     <div>
       <h1
@@ -58,7 +60,21 @@ const Loading = () => {
       </h1>
       <Row justify="space-evenly">
         <Col span={4}>
-          <Link to="/">
+          <Link
+            to="/"
+            style={{
+              pointerEvents:
+                user?.data.role === "Nhân viên" ||
+                user?.data.role === ROLE.SUPER_ADMIN
+                  ? "auto"
+                  : "none",
+              opacity:
+                user?.data.role === "Nhân viên" ||
+                user?.data.role === ROLE.SUPER_ADMIN
+                  ? "1"
+                  : "0.5",
+            }}
+          >
             <div
               style={{
                 border: "1px solid #000",
@@ -68,7 +84,6 @@ const Loading = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                cursor: "pointer",
               }}
               className="hover"
             >
@@ -85,12 +100,29 @@ const Loading = () => {
               marginTop: "10px",
             }}
           >
-            Khách hàng
+            Nhân viên
           </div>
         </Col>
 
-        <Col span={4} className={user?.data.role === ROLE.SUPER_ADMIN ? "disabled" : ""}>
-          <Link to="/">
+        <Col
+          span={4}
+          className={user?.data.role === ROLE.SUPER_ADMIN ? "disabled" : ""}
+        >
+          <Link
+            to="/"
+            style={{
+              pointerEvents:
+                user?.data.role === "Bác sĩ" ||
+                user?.data.role === ROLE.SUPER_ADMIN
+                  ? "auto"
+                  : "none",
+              opacity:
+                user?.data.role === "Bác sĩ" ||
+                user?.data.role === ROLE.SUPER_ADMIN
+                  ? "1"
+                  : "0.5",
+            }}
+          >
             <div
               style={{
                 border: "1px solid #000",
@@ -123,7 +155,21 @@ const Loading = () => {
         </Col>
 
         <Col span={4}>
-          <Link to="/">
+          <Link
+            to="/"
+            style={{
+              pointerEvents:
+                user?.data.role === "Điều dưỡng" ||
+                user?.data.role === ROLE.SUPER_ADMIN
+                  ? "auto"
+                  : "none",
+              opacity:
+                user?.data.role === "Điều dưỡng" ||
+                user?.data.role === ROLE.SUPER_ADMIN
+                  ? "1"
+                  : "0.5",
+            }}
+          >
             <div
               style={{
                 border: "1px solid #000",
@@ -155,7 +201,14 @@ const Loading = () => {
         </Col>
 
         <Col span={4}>
-          <Link to="/">
+          <Link
+            to="/"
+            style={{
+              pointerEvents:
+                user?.data.role === ROLE.SUPER_ADMIN ? "auto" : "none",
+              opacity: user?.data.role === ROLE.SUPER_ADMIN ? "1" : "0.5",
+            }}
+          >
             <div
               style={{
                 border: "1px solid #000",

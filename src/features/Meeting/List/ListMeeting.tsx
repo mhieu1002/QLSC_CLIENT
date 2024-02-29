@@ -1,28 +1,32 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Col, Row, Button } from "antd";
-import { useQuery } from "@tanstack/react-query";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { Col, Row, Button, Modal, Select } from "antd";
+import { LeftOutlined, RightOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { meetApi } from "../../../services/apis/meet";
-import { groupBy, sortBy } from "lodash"; // Thêm sortBy từ lodash
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { groupBy, sortBy } from "lodash";
+
+const { Option } = Select;
 
 const ListMeeting = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
-  const [currentWeek, setCurrentWeek] = useState(moment().startOf("isoWeek")); // Sửa từ startOf('week') sang startOf('isoWeek')
+  const [currentWeek, setCurrentWeek] = useState(moment().startOf("isoWeek"));
   const { data: meets, refetch } = useQuery({
     queryKey: ["meets"],
     queryFn: () =>
       meetApi.getAll({
         page: page,
         limit: pageSize,
-        startDate: currentWeek.clone().isoWeekday(1).format("YYYY-MM-DD"), // Sửa từ startOf('week') sang isoWeekday(1)
-        endDate: currentWeek.clone().isoWeekday(7).format("YYYY-MM-DD"), // Sửa từ endOf('week') sang isoWeekday(7)
+        // startDate: currentWeek.clone().isoWeekday(1).format("YYYY-MM-DD"),
+        // endDate: currentWeek.clone().isoWeekday(7).format("YYYY-MM-DD"),
       }),
     enabled: true,
   });
+
+  const { mutate: deleteMeeting } = useMutation(meetApi.deleteById);
 
   const goToPreviousWeek = () => {
     setCurrentWeek((prevWeek) => prevWeek.clone().subtract(1, "week"));
@@ -39,7 +43,29 @@ const ListMeeting = () => {
   const startOfWeek = currentWeek.clone().isoWeekday(1).format("DD/MM/YYYY");
   const endOfWeek = currentWeek.clone().isoWeekday(7).format("DD/MM/YYYY");
 
-  const getVietnameseDay = (englishDay) => {
+  const handleDeleteMeeting = async (id: string) => {
+    Modal.confirm({
+      title: "Xác nhận xóa",
+      content: "Bạn có chắc chắn muốn xóa lịch họp này?",
+      okText: "Xóa",
+      cancelText: "Hủy",
+      onOk: async () => {
+        try {
+          await deleteMeeting(id);
+          Modal.success({ content: "Xóa thành công" });
+          refetch();
+        } catch (error) {
+          Modal.error({ content: "Đã xảy ra lỗi" });
+        }
+      },
+    });
+  };
+
+  const handleUpdateMeeting = (id: string) => {
+    navigate(`/meeting-schedule/${id}`);
+  };
+
+  const getVietnameseDay = (englishDay: string) => {
     switch (englishDay) {
       case "Monday":
         return "Thứ 2";
@@ -65,7 +91,6 @@ const ListMeeting = () => {
     return formattedDate;
   });
 
-  // Sắp xếp theo thời gian bắt đầu của lịch họp
   const sortedGroupedMeetings = sortBy(
     Object.entries(groupedMeetings),
     ([date]) => {
@@ -82,9 +107,6 @@ const ListMeeting = () => {
   return (
     <main>
       <div style={{ padding: "20px 0", float: "right" }}>
-        <Button type="primary" style={{ margin: "0 20px", height: "35px" }}>
-          Tìm kiếm
-        </Button>
         <Button
           type="primary"
           style={{ height: "35px" }}
@@ -174,13 +196,19 @@ const ListMeeting = () => {
               <div>{moment(date, "dddd, DD/MM/YYYY").format("DD/MM/YYYY")}</div>
             </div>
             {meetings.sort((a, b) => {
-              return moment(a.startTime).diff(b.startTime);
+              const startTimeDiff = moment(a.startTime).diff(b.startTime);
+              if (startTimeDiff !== 0) {
+                return startTimeDiff;
+              } else {
+                return moment(a.endTime).diff(b.endTime);
+              }
             }).map((item, index) => (
               <div
-                key={index}
+                key={item.id}
                 style={{
+                  position: 'relative',
                   width: "95%",
-                  background: "#3a87ad",
+                  background: "#6CA6CD",
                   paddingTop: "10px",
                   marginTop: "2px",
                   paddingBottom: "10px",
@@ -207,7 +235,7 @@ const ListMeeting = () => {
                   </Col>
                   <Col
                     flex={4}
-                    style={{ maxWidth: "1100px", minWidth: "1100px" }}
+                    style={{ maxWidth: "1150px", minWidth: "1150px" }}
                   >
                     <div
                       style={{
@@ -227,8 +255,27 @@ const ListMeeting = () => {
                       <div>Phòng họp: {item.room}</div>
                       <div>Chủ trì: {item.host}</div>
                       <div>Người tham dự: {item.participants}</div>
-                      <div>Người tạo: {item.adminUserId}</div>
+                      <div>Người tạo: {item.adminUser.fullName}</div>
                     </div>
+                    <Button
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '40px',
+                        marginRight: "10px"
+                      }}
+                      icon={<EditOutlined />}
+                      onClick={() => handleUpdateMeeting(item.id)}
+                    />
+                    <Button
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px'
+                      }}
+                      icon={<DeleteOutlined />}
+                      onClick={() => handleDeleteMeeting(item.id)}
+                    />
                   </Col>
                 </Row>
               </div>
@@ -236,7 +283,6 @@ const ListMeeting = () => {
           </div>
         );
       })}
-      {/* Hiển thị thông báo nếu không có sự kiện nào trong tuần */}
       {sortedGroupedMeetings.every(([date, meetings]) => {
         const isWithinCurrentWeek = currentWeek.clone().startOf("isoWeek").isSame(
           moment(date, "dddd, DD/MM/YYYY").startOf("isoWeek"),
@@ -253,7 +299,6 @@ const ListMeeting = () => {
             fontFamily: "Montserrat",
             fontSize: "20px",
             color: "#555",
-            fontFamily: "Montserrat",
           }}
         >
           Không có sự kiện để hiển thị

@@ -25,4 +25,9 @@ const getAll = async (params: IQueryParams) => {
   return response;
 };
 
-export const meetApi = { getById, create, getAll, update };
+const deleteById = async (id: string) => {
+  const response = await axiosInstance.delete(`/meeting/delete/${id}`);
+  return response;
+};
+
+export const meetApi = { getById, create, getAll, update, deleteById };

@@ -89,9 +89,9 @@ const ListPrinterRepair = () => {
   return (
     <main>
       <div style={{ padding: "20px 0", float: "right" }}>
-        <Button type="primary" style={{ height: "35px" }}>
+        {/* <Button type="primary" style={{ height: "35px" }}>
           Tìm kiếm
-        </Button>
+        </Button> */}
         <Button
           type="primary"
           style={{ margin: "0 30px", height: "35px" }}
