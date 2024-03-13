@@ -1,21 +1,28 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Col, Form, Input, Row, Select, message } from "antd";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Row,
+  Select,
+  message,
+  Upload,
+  DatePicker,
+  Space,
+} from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import { isNil, map } from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { DatePicker, Space } from "antd";
-import type { DatePickerProps } from "antd";
-import {
-  problemIndustries,
-  problemReciever,
-  meeting,
-} from "../../../assets/data";
+import { meeting } from "../../../assets/data";
 import { ROLE } from "../../../constants/role";
 import { adminUserApi } from "../../../services/apis/adminUser";
 import { authApi } from "../../../services/apis/authApi";
 import { departmentApi } from "../../../services/apis/departmentApi";
 import { meetApi } from "../../../services/apis/meet";
 import { MeetDto } from "../../../types/meet";
+import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
 
@@ -26,8 +33,7 @@ const { Option } = Select;
 const FormMeeting = () => {
   const [form] = Form.useForm();
   const { id } = useParams();
-  const [startTime, setStartTime] = useState<Date>();
-  const [endTime, setEndTime] = useState<Date>();
+  console.log(id)
   const navigate = useNavigate();
   const { data: user } = useQuery({
     queryKey: ["getProfile"],
@@ -64,12 +70,21 @@ const FormMeeting = () => {
     },
   });
 
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  const [startTime, endTime] = useMemo(() => {
+    if (meet?.data?.startTime && meet?.data?.endTime) {
+      return [
+        dayjs(meet.data.startTime),
+        dayjs(meet.data.endTime)
+      ];
+    } else {
+      return [null, null];
+    }
+  }, [meet?.data?.startTime, meet?.data?.endTime]);
+  
   const initialValues = {
     title: meet?.data?.title ?? "",
-    startTime: meet?.data?.startTime ?? "",
-    endTime: meet?.data?.endTime ?? "",
+    rangePicker: [startTime, endTime],
     host: meet?.data?.host ?? "",
     room: meet?.data?.room ?? "",
     adminUserId: meet?.data?.adminUserId ?? "",
@@ -78,12 +93,17 @@ const FormMeeting = () => {
   };
 
   const handleFinish = useCallback(
-    (values: MeetDto) => {
+    (values: any) => {
       // Sử dụng giá trị startTime và endTime từ state
+      const rangePickerValue = values.rangePicker;
+
+      const startTime = rangePickerValue[0];
+      const endTime = rangePickerValue[1];
+
       const formData = {
         title: values.title,
-        startTime: startTime ? startTime.toISOString() : '', // Chuyển đổi startTime từ Date sang string
-        endTime: endTime ? endTime.toISOString() : '', // Chuyển đổi endTime từ Date sang string
+        startTime: startTime,
+        endTime: endTime,
         host: values.host,
         room: values.room,
         adminUserId: values.adminUserId ?? user?.data?.id,
@@ -91,20 +111,11 @@ const FormMeeting = () => {
         participants: values.participants,
       };
 
-      // Kiểm tra xem startTime và endTime có giá trị không
-      if (!startTime || !endTime) {
-        // Thông báo cho người dùng cung cấp giá trị cho startTime và endTime
-        message.error("Vui lòng chọn thời gian bắt đầu và kết thúc");
-        return; // Dừng hàm ở đây nếu không có giá trị cho startTime hoặc endTime
-      }
-
-      console.log("🚀 ~ FormMeeting ~ formData:", formData);
-
       if (id) {
         updateMeet.mutate(formData, {
           onSuccess: () => {
             message.success("Cập nhật phiếu thành công");
-            navigate("/sign-up-for-printer-repair");
+            navigate("/meeting-schedule");
           },
           onError: () => {
             message.error("Cập nhật phiếu thất bại");
@@ -117,7 +128,6 @@ const FormMeeting = () => {
             navigate("/meeting-schedule");
           },
           onError: (error: any) => {
-            message.error("Trùng lịch họp");
             const { data } = error;
             if (data?.response?.data?.statusCode === 401) {
               message.error("Lỗi rồi");
@@ -126,52 +136,19 @@ const FormMeeting = () => {
         });
       }
     },
-    [id, user?.data?.id, startTime, endTime]
+    [id, user?.data?.id]
   );
 
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
   };
 
-  const onChange = (dates: any, dateStrings: [string, string]) => {
-    console.log("🚀 ~ onChange ~ dateStrings:", dateStrings);
-    console.log("🚀 ~ onChange ~ dates:", dates);
-    const startDate = new Date(dateStrings[0]);
-    const endDate = new Date(dateStrings[1]);
-
-    setStartTime(startDate);
-    setEndTime(endDate);
-
-    // form.setFieldsValue({
-    //   startTime: dateStrings[0], // Gán thời gian bắt đầu vào trường startTime
-    //   endTime: dateStrings[1], // Gán thời gian kết thúc vào trường endTime
-    // });
-  };
-
-  const onOk = (dates: any) => {
-    console.log("onOk:", dates);
-  };
-
-  // const handleConfirmReturnPrinter = () => {
-  //   try {
-  //     // Cập nhật trường isConfirmed thành true, viết 1 api chỉ update trường đó thôi, viết update đó no có hiểu gì đâu? này update này update tổng thì mấy kia d
-  //     updateConfirmPrinftMutation.mutate(
-  //       { isConfirmed: true },
-  //       {
-  //         onSuccess: () => {
-  //           message.success("Đã trả máy in về khoa");
-  //         },
-  //         onError: () => {
-  //           message.error("Cập nhật thất bại");
-  //         },
-  //       }
-  //     );
-
-  //     // Hiển thị thông báo đã trả máy in về khoa
-  //   } catch (error) {
-  //     // Xử lý lỗi nếu có
-  //     console.error("Lỗi khi xác nhận trả máy in:", error);
-  //     message.error("Đã xảy ra lỗi khi xác nhận trả máy in");
+  // const handleChange = (info) => {
+  //   if (info.file.status === 'done') {
+  //     message.success(`${info.file.name} file uploaded successfully`);
+  //     // Ở đây bạn có thể gửi tệp PDF lên máy chủ hoặc xử lý theo nhu cầu của bạn
+  //   } else if (info.file.status === 'error') {
+  //     message.error(`${info.file.name} file upload failed.`);
   //   }
   // };
 
@@ -186,14 +163,11 @@ const FormMeeting = () => {
     checkRoleAdmin
   );
 
-  // useEffect(() => {
-  //   if (initialValues) {
-  //     form.setFieldsValue(initialValues);
-  //   }
-  //   else{
-  //     form.setFieldsValue(initialValues);
-  //   } 
-  // }, [form, initialValues]);
+  useEffect(() => {
+    if (initialValues) {
+      form.setFieldsValue(initialValues);
+    }
+  }, [form, initialValues]);
 
   return (
     <section>
@@ -294,17 +268,25 @@ const FormMeeting = () => {
           )}
           <Col xl={12}>
             <Form.Item
-              label="Thời gian bắt đầu - Thời gian kết thúc"
-              name="rangePicker"
+              label="Thời gian bắt đầu - kết thúc"
+              name={["rangePicker"]}
             >
-              <Space direction="vertical" size={12}>
-                <RangePicker
-                  showTime={{ format: "HH:mm" }}
-                  format="YYYY-MM-DD HH:mm"
-                  onChange={onChange}
-                  onOk={onOk}
-                />
-              </Space>
+              <RangePicker
+                showTime={{ format: "HH:mm" }}
+                format="YYYY-MM-DD HH:mm"
+              />
+            </Form.Item>
+          </Col>
+          <Col xl={12}>
+            {" "}
+            <Form.Item label="Tệp PDF" name="pdfFile">
+              <Upload
+                name="pdfFile"
+                action="/api/uploadPdf" // Thay đổi đường dẫn tương ứng với URL của máy chủ để xử lý yêu cầu tải lên
+                accept=".pdf" // Chỉ cho phép tải lên các tệp có phần mở rộng là .pdf
+              >
+                <Button icon={<UploadOutlined />}>Tải lên tệp PDF</Button>
+              </Upload>
             </Form.Item>
           </Col>
         </Row>

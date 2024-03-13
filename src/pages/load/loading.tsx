@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import "../../styles/index.scss";
 import { ROLE } from "../../constants/role";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { isNil, map } from "lodash";
 import { useNavigate, useParams } from "react-router-dom";
 import { adminUserApi } from "../../services/apis/adminUser";
 import { authApi } from "../../services/apis/authApi";
@@ -41,7 +40,7 @@ const Loading = () => {
     checkRoleAdmin
   );
 
-  console.log(user?.data.role);
+  console.log(user);
 
   return (
     <div>

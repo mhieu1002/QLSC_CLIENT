@@ -25,7 +25,7 @@ const getAll = async (params: IQueryParams) => {
   return response;
 };
 
-const deleteById = async (id: string) => {
+const deleteById = async (id: number) => {
   const response = await axiosInstance.delete(`/meeting/delete/${id}`);
   return response;
 };

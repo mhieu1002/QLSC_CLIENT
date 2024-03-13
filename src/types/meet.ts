@@ -9,6 +9,7 @@ type MeetDto = {
   participants: string;
   startTime: string;
   endTime: string;
+  
 };
 
 type MeetQueryParams = IQueryParams & {

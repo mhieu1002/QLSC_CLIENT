@@ -22,13 +22,14 @@ const Header = () => {
           <h2
             style={{
               paddingTop: "8px",
-              letterSpacing: "3px"
+              letterSpacing: "3px",
             }}
           >
             BỆNH VIỆN NHI ĐỒNG 2
           </h2>
         </div>
         <Space>
+          <span style={{fontSize: "16px", letterSpacing: "1px", fontWeight: "600"}}>Phạm Minh Hiếu</span>
           <div className="rs-header-profile">
             <div className="rs-header-profile-avatar">
               <Popover
@@ -36,11 +37,6 @@ const Header = () => {
                 trigger="click"
                 content={
                   <div className="rs-header-popover">
-                    <Link to={"/profile"}>
-                      <div className="rs-header-popover-item">
-                        Quản lý tài khoản
-                      </div>
-                    </Link>
                     <div
                       className="rs-header-popover-item"
                       onClick={() => {

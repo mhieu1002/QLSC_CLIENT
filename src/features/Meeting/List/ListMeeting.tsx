@@ -1,13 +1,17 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { Col, Row, Button, Modal, Select } from "antd";
-import { LeftOutlined, RightOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  LeftOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
+import { Button, Col, Modal, Row } from "antd";
+import { groupBy, sortBy } from "lodash";
 import moment from "moment";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { meetApi } from "../../../services/apis/meet";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { groupBy, sortBy } from "lodash";
 
-const { Option } = Select;
 
 const ListMeeting = () => {
   const navigate = useNavigate();
@@ -20,13 +24,9 @@ const ListMeeting = () => {
       meetApi.getAll({
         page: page,
         limit: pageSize,
-        // startDate: currentWeek.clone().isoWeekday(1).format("YYYY-MM-DD"),
-        // endDate: currentWeek.clone().isoWeekday(7).format("YYYY-MM-DD"),
       }),
     enabled: true,
   });
-
-  const { mutate: deleteMeeting } = useMutation(meetApi.deleteById);
 
   const goToPreviousWeek = () => {
     setCurrentWeek((prevWeek) => prevWeek.clone().subtract(1, "week"));
@@ -36,24 +36,26 @@ const ListMeeting = () => {
     setCurrentWeek((prevWeek) => prevWeek.clone().add(1, "week"));
   };
 
-  useEffect(() => {
-    refetch();
-  }, [page, pageSize, refetch, currentWeek]);
+ 
 
   const startOfWeek = currentWeek.clone().isoWeekday(1).format("DD/MM/YYYY");
   const endOfWeek = currentWeek.clone().isoWeekday(7).format("DD/MM/YYYY");
 
-  const handleDeleteMeeting = async (id: string) => {
+  const handleDeleteMeeting = async (id: number) => {
+    console.log(meets)
     Modal.confirm({
       title: "Xác nhận xóa",
-      content: "Bạn có chắc chắn muốn xóa lịch họp này?",
+      content: "Bạn có chắc chắn muốn xóa cuộc họp này?",
       okText: "Xóa",
       cancelText: "Hủy",
+    
       onOk: async () => {
         try {
-          await deleteMeeting(id);
-          Modal.success({ content: "Xóa thành công" });
-          refetch();
+          const response = await meetApi.deleteById(id);
+          if (response.status === 200) {
+            refetch()
+            Modal.success({ content: "Xóa thành công" });
+          }
         } catch (error) {
           Modal.error({ content: "Đã xảy ra lỗi" });
         }
@@ -103,6 +105,11 @@ const ListMeeting = () => {
     setPage(page);
     setPageSize(pageSize);
   }, []);
+
+
+  useEffect(() => {
+    refetch();
+  }, [page, pageSize, refetch, currentWeek]);
 
   return (
     <main>
@@ -162,10 +169,10 @@ const ListMeeting = () => {
       </div>
 
       {sortedGroupedMeetings.map(([date, meetings]) => {
-        const isWithinCurrentWeek = currentWeek.clone().startOf("isoWeek").isSame(
-          moment(date, "dddd, DD/MM/YYYY").startOf("isoWeek"),
-          "week"
-        );
+        const isWithinCurrentWeek = currentWeek
+          .clone()
+          .startOf("isoWeek")
+          .isSame(moment(date, "dddd, DD/MM/YYYY").startOf("isoWeek"), "week");
 
         if (!isWithinCurrentWeek) return null;
 
@@ -195,99 +202,102 @@ const ListMeeting = () => {
               </div>
               <div>{moment(date, "dddd, DD/MM/YYYY").format("DD/MM/YYYY")}</div>
             </div>
-            {meetings.sort((a, b) => {
-              const startTimeDiff = moment(a.startTime).diff(b.startTime);
-              if (startTimeDiff !== 0) {
-                return startTimeDiff;
-              } else {
-                return moment(a.endTime).diff(b.endTime);
-              }
-            }).map((item, index) => (
-              <div
-                key={item.id}
-                style={{
-                  position: 'relative',
-                  width: "95%",
-                  background: "#6CA6CD",
-                  paddingTop: "10px",
-                  marginTop: "2px",
-                  paddingBottom: "10px",
-                  borderRadius: "6px",
-                }}
-              >
-                <Row>
-                  <Col
-                    flex={1}
-                    style={{ maxWidth: "250px", minWidth: "250px" }}
-                  >
-                    <div
-                      style={{
-                        fontSize: "16px",
-                        fontWeight: "700",
-                        color: "white",
-                        paddingLeft: "12px",
-                        fontFamily: "Montserrat",
-                      }}
+            {meetings
+              .sort((a, b) => {
+                const startTimeDiff = moment(a.startTime).diff(b.startTime);
+                if (startTimeDiff !== 0) {
+                  return startTimeDiff;
+                } else {
+                  return moment(a.endTime).diff(b.endTime);
+                }
+              })
+              .map((item, index) => (
+                <div
+                  key={item.id}
+                  style={{
+                    position: "relative",
+                    width: "95%",
+                    background: "#6CA6CD",
+                    paddingTop: "10px",
+                    marginTop: "2px",
+                    paddingBottom: "10px",
+                    borderRadius: "6px",
+                  }}
+                >
+                  <Row>
+                    <Col
+                      flex={1}
+                      style={{ maxWidth: "250px", minWidth: "250px" }}
                     >
-                      {moment(item.startTime).format("HH:mm")} -{" "}
-                      {moment(item.endTime).format("HH:mm")}
-                    </div>
-                  </Col>
-                  <Col
-                    flex={4}
-                    style={{ maxWidth: "1150px", minWidth: "1150px" }}
-                  >
-                    <div
-                      style={{
-                        fontSize: "16px",
-                        fontWeight: "400",
-                        color: "white",
-                        paddingLeft: "12px",
-                        lineHeight: "25px",
-                        fontFamily: "Montserrat",
-                      }}
-                    >
-                      <div>{item.title}</div>
-                      <div style={{ fontWeight: "700" }}>
-                        Thời gian: {moment(item.startTime).format("HH:mm")} -{" "}
+                      <div
+                        style={{
+                          fontSize: "16px",
+                          fontWeight: "700",
+                          color: "white",
+                          paddingLeft: "12px",
+                          fontFamily: "Montserrat",
+                        }}
+                      >
+                        {moment(item.startTime).format("HH:mm")} -{" "}
                         {moment(item.endTime).format("HH:mm")}
                       </div>
-                      <div>Phòng họp: {item.room}</div>
-                      <div>Chủ trì: {item.host}</div>
-                      <div>Người tham dự: {item.participants}</div>
-                      <div>Người tạo: {item.adminUser.fullName}</div>
-                    </div>
-                    <Button
-                      style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '40px',
-                        marginRight: "10px"
-                      }}
-                      icon={<EditOutlined />}
-                      onClick={() => handleUpdateMeeting(item.id)}
-                    />
-                    <Button
-                      style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '10px'
-                      }}
-                      icon={<DeleteOutlined />}
-                      onClick={() => handleDeleteMeeting(item.id)}
-                    />
-                  </Col>
-                </Row>
-              </div>
-            ))}
+                    </Col>
+                    <Col
+                      flex={4}
+                      style={{ maxWidth: "1150px", minWidth: "1150px" }}
+                    >
+                      <div
+                        style={{
+                          fontSize: "16px",
+                          fontWeight: "400",
+                          color: "white",
+                          paddingLeft: "12px",
+                          lineHeight: "25px",
+                          fontFamily: "Montserrat",
+                        }}
+                      >
+                        <div style={{width: "90%"}}>{item.title}</div>
+                        <div style={{ fontWeight: "700" }}>
+                          Thời gian: {moment(item.startTime).format("HH:mm")} -{" "}
+                          {moment(item.endTime).format("HH:mm")}
+                        </div>
+                        <div>Phòng họp: {item.room}</div>
+                        <div style={{width: "90%"}}>Chủ trì: {item.host}</div>
+                        <div style={{width: "90%"}}>Người tham dự: {item.participants}</div>
+                        <div>Người tạo: {item.adminUser.fullName}</div>
+                      </div>
+                      <div></div>
+                      <Button
+                        style={{
+                          position: "absolute",
+                          top: "10px",
+                          right: "40px",
+                          marginRight: "10px",
+                        }}
+                        icon={<EditOutlined />}
+                        onClick={() => handleUpdateMeeting(item.id)}
+                      />
+                      <Button
+                        style={{
+                          position: "absolute",
+                          top: "10px",
+                          right: "10px",
+                        }}
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDeleteMeeting(item.id)}
+                      />
+                    </Col>
+                  </Row>
+                </div>
+              ))}
           </div>
         );
       })}
       {sortedGroupedMeetings.every(([date, meetings]) => {
-        const isWithinCurrentWeek = currentWeek.clone().startOf("isoWeek").isSame(
-          moment(date, "dddd, DD/MM/YYYY").startOf("isoWeek"),
-          "week"
-        );
+        const isWithinCurrentWeek = currentWeek
+          .clone()
+          .startOf("isoWeek")
+          .isSame(moment(date, "dddd, DD/MM/YYYY").startOf("isoWeek"), "week");
         return !isWithinCurrentWeek || meetings.length === 0;
       }) && (
         <div
